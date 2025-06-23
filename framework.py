@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
-widget_form, base_class = uic.loadUiType('./TotalStatusLeftView.ui')  # Qt Designer로 제작된 *.ui 파일 연결
+widget_form, base_class = uic.loadUiType('./designer_made.ui')  # Qt Designer로 제작된 *.ui 파일 연결
 
 class MainClass(base_class, widget_form):
     def __init__(self, *args: None, **kwargs: None) -> None:
