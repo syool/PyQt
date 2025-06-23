@@ -13,7 +13,7 @@ widget_form, base_class = uic.loadUiType('./designer_made.ui')  # Qt Designer로
 class MainClass(base_class, widget_form):
     def __init__(self, *args: None, **kwargs: None) -> None:
         super().__init__(*args, **kwargs)
-        self.setupUi(self) # *.ui 파일 내 속성을 .py 파일로 연결
+        self.setupUi(self) # .ui 파일 내 속성을 .py 파일로 연결
         self.setWindowTitle('blah') # 윈도우 타이틀 설정
         
         self.initUi()
