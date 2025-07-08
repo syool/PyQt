@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>495</width>
+    <height>445</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget{
+	background-color: rgb(48, 49, 51);
+	color : rgb(244, 244, 244);
+	font: 12pt &quot;나눔스퀘어 Bold&quot;;
+}
+QFrame[objectName*=frame]{
+	background-color: rgb(55, 59, 60);
+	border-radius : 12px;
+}
+QLabel[objectName*=label]{
+	background-color: rgb(55, 59, 60);
+	border-radius : 12px;
+}
+QPushButton{
+	background-color : rgb(48, 49, 51);
+	border-radius : 4px;
+	padding : 5px;
+}
+QPushButton:hover{
+	background-color : rgb(86, 92, 94);
+}
+
+QPushButton:pressed{
+	background-color :rgb(21, 181, 192);
+	color : rgb(55, 59, 60);
+}
+QPushButton:checked{
+	background-color : rgb(21, 181, 192);
+	color : rgb(55, 59, 60);
+}
+QGroupBox[objectName*=groupBox]{
+	background-color: rgb(55, 59, 60);
+}
+QTabBar::tab {
+	color : #000000;
+	font : 15px;
+}
+QCheckBox{
+	background-color: rgb(55, 59, 60);
+}
+QTreeWidget{
+	background-color: rgb(55, 59, 60);
+}
+QTreeWidget::item {
+	background-color: rgba(55, 59, 60, 100);  /* Hover 색상 */
+}
+QTreeWidget::item:hover {
+	background-color: rgba(20, 181, 192, 100);  /* Hover 색상 */
+}
+QTreeWidget::item:selected {
+	background-color: rgba(20, 181, 192, 150);  /* 선택된 색상 */
+}
+QHeaderView::section {
+	background-color : rgb(32, 39, 46); /* 헤더 배경 색상 */
+	color: rgb(204, 204, 204);          /* 헤더 텍스트 색상 */
+	font-weight: bold;                 /* 헤더 텍스트 굵게 */
+	font : 8pt;
+}
+QRadioButton{
+	background-color: rgb(55, 59, 60);
+}</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="my_label">
+        <property name="text">
+         <string>INIT TEXT</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
