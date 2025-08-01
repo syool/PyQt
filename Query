@@ -34,4 +34,4 @@ class LineEditController(QObject):
 
 RecursionError: maximum recursion depth exceeded while calling a Python object
 
-실행 컨트롤러가 OQbject를 상속받으면서도 이런 에러가 생기지 않게 만들 수 있어?
+실행 컨트롤러가 QObject를 상속받으면서도 이런 에러가 생기지 않게 만들 수 있어?
