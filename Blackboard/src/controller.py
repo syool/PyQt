@@ -9,6 +9,7 @@ class Launcher(QObject):
     실행 컨트롤러
         1. 이 컨트롤러는 parent 인자를 명시하지 않으면 기본적으로 Qbject를 상속받습니다.
         2. 이 컨트롤러를 실행하는 상위 컨트롤러의 self를 parent 인자로 상속받는 걸 권장합니다.
+        3. 이 컨트롤러가 앱 전체 최상위 컨트롤러일 경우, parent 인자를 명시하지 않아도 좋습니다.
     '''
     def __init__(
             self,
