@@ -1,17 +1,49 @@
 import sys
 from PyQt5.QtWidgets import QApplication
 
-from src import model, view, controller
+from src import controller
 
 def run() -> None:
     app = QApplication(sys.argv)
     
-    m = model.Model()
-    v = view.View()
-    _ = controller.Controller(m, v)
-    
-    v.show()
+    _ = controller.Launcher()
+
     sys.exit(app.exec_())
     
 if __name__ == '__main__':
     run()
+
+'''
+개발자 노트: 코드 구조에 대해
+    임무계획 CSC1은 MVC 패턴을 바탕으로 설계되었습니다.
+    이 패턴 중 컨트롤러 설계를 제 입맛에 맞게 바꿨습니다. 모든 컨트롤러 모듈은 실행 컨트롤러와 기능 컨트롤러를 포함합니다.
+    
+    실행 컨트롤러의 역할은 아래와 같습니다.
+    1. 자신과 연결된 view의 표시를 책임집니다.
+    2. 기능 컨트롤러를 하나로 묶어주는 역할을 담당합니다.
+    3. 다른 컨트롤러 모듈과 소통하는 창구 역할을 담당합니다.
+    4. 따라서 실행 컨트롤러는 컨트롤러 모듈 내에서 하나만 존재합니다.
+
+    기능 컨트롤러의 역할은 아래와 같습니다.
+    1. PyQt 위젯 별 기능 구현을 담당합니다. 예를 들어 ButtonController가 모든 QPushButton의 기능을 담당하는 식입니다.
+    2. 실행 컨트롤러에 종속적입니다. 모든 기능 컨트롤러의 객체는 실행 컨트롤러에서 생성됩니다.
+    
+    예컨대 MyApp.ui 창은 MyApp_view.py, MyApp_model.py, MyApp_ctrl.py 모듈 세 개를 할당받으며,
+    이 중 MyApp_ctrl.py 모듈은 Drive로 명명된 실행 컨트롤러 하나와 나머지 기능 컨트롤러들을 담고 있습니다.
+    나머지 모든 .ui 파일도 동일한 방식으로 설계되었습니다.
+
+     상속 구조는 아래와 같습니다.
+    1. 실행 컨트롤러: parent 인자를 명시하지 않는다면 QObject를 상속받습니다.
+                   되도록이면 해당 실행 컨트롤러를 사용하는 상위 컨트롤러의 self를 상속받도록 합시다.
+    2. 기능 컨트롤러: 마찬가지로 parent 인자를 명시하지 않는다면 QObject를 상속받습니다.
+                   그러나 실행 컨트롤러에서 기능 컨트롤러들을 생성할 때 parent 인자로 self를 넘기도록 했습니다.
+                   따라서 기능 컨트롤러는 반드시 실행 컨트롤러의 상속을 받아야합니다.
+    
+    이러한 점에 유의하여 코드를 유지보수해야 합니다.
+
+    실행 컨트롤러를 둔 이유는 컨트롤러 모듈 간 소통의 편의성 때문입니다.
+    예컨대 YourApp_ctrl.py 모듈에서 MyApp.ui를 띄우는 기능이 필요하다면,
+    해당 view의 표시를 책임지는 MyApp의 실행 컨트롤러만 객체로 생성해주면 됩니다.
+    
+    따라서 컨트롤러 간 소통은 반드시 실행 컨트롤러를 통해서만 이루어지도록 설계했다고 이해하면 됩니다.
+'''
