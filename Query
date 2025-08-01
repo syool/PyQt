@@ -1,0 +1,37 @@
+PyQt의 MVC 패턴에 대해 물어볼 게 있어.
+
+지금 내가 만든 컨트롤러 모듈은 실행 컨트롤러 하나와 나머지 기능 컨트롤러 여러 개로 구성되어 있어. 예를 들어 MyCtrl.py 모듈의 내용은 다음과 같아.
+
+from PyQt5.QtCore import QObject
+
+class Drive:
+    # 실행 컨트롤러
+    def __init__(self):
+        self.model = MyModel()
+        self.view = MyView()
+        self.controller = [
+            ButtonController(self.model, self.view),
+            LineEditController(self.model, self.view)
+        ]
+        self.view.show()
+
+class ButtonController(QObject):
+    # 기능 컨트롤러 1
+    def __init__(self, model, view):
+        self.model = model
+        self.view = view
+        # 이하 생략..
+
+class LineEditController(QObject):
+    # 기능 컨트롤러 2
+    def __init__(self, model, view):
+        self.model = model
+        self.view = view
+        # 이하 생략..
+
+다른 컨트롤러 모듈이나 main.py에서 MyView를 표시해야 한다면, MyCtrl.Drive()를 통해 객체를 생성하기만 하면 돼.
+여기서 문제가 있어. 실행 컨트롤러(Drive)가 QObject를 상속받지 않으니 코딩할 때 불편해. 그래서 실행 컨트롤러가 QObject를 상속받게 만들었더니 에러가 나. 내용은 아래와 같아.
+
+RecursionError: maximum recursion depth exceeded while calling a Python object
+
+실행 컨트롤러가 OQbject를 상속받으면서도 이런 에러가 생기지 않게 만들 수 있어?
