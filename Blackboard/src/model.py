@@ -3,55 +3,65 @@ from PyQt5.QtCore import QObject, pyqtSignal, pyqtProperty
 
 
 class Model(QObject):
+    ''' 모델 '''
+    
     '''
-    개발자 노트:
-        Qt 시그널 및 Qt 프로퍼티는 클래스 수준(class attribute)으로 선언해야 합니다.
-        그래야 Qt 메타시스템이 시그널과 프로퍼티를 인식할 수 있고, 오버라이딩을 방지할 수 있기 때문입니다.
-        __init__()에서는 모델이 저장하는 정보를 선언합니다.
+    ✅개발자 노트:
+        Qt 시그널 및 Qt 프로퍼티는 클래스 수준(class attribute)으로 선언해야 함
+        그래야 Qt 메타시스템이 시그널과 프로퍼티를 인식할 수 있고, 오버라이딩을 방지할 수 있음
     '''
-    userTextChanged = pyqtSignal(str)
+    jsonChanged = pyqtSignal(str) # json 데이터 읽기 및 쓰기 시그널 선언
     
     def __init__(self) -> None:
         super().__init__()
         self.json_path: str = './db/data.json'
-        self.input_content: str = ''
+        self._text_in_shell: str = None # json에서 불러운 데이터를 모델에 저장
 
-    def _get_label_text_from_json(self) -> str:
-        ''' QLabel에 표시될 내용을 가져오는 함수 '''
+        self.load_from_json() # 모델 객체 생성 시 json 데이터를 메모리에 고정: json 파일의 반복적인 읽고 쓰기를 방지하기 위함
+
+    @pyqtProperty(str, notify=jsonChanged) # 데코레이터를 활용해 간소한 프로퍼티로 선언
+    def get_text_json(self):
+        return self._text_in_shell
+
+    def load_from_json(self):
+        ''' json 파일 읽기 '''
         try:
             with open(self.json_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                return data.get('TextInTheShell', '오류: 키를 찾을 수 없음')
+                data = json.load(f) # json 데이터를 딕셔너리로 불러 옴
+                self._text_in_shell = data.get('TextInTheShell', '') # 그 중 원하는 내용을 모델에 저장
+                self.jsonChanged.emit(self._text_in_shell) # json 데이터 읽기가 발생했다는 시그널 방출
+                
+        except (FileNotFoundError, json.JSONDecodeError):
+            print("Warning: JSON 파일을 찾을 수 없거나 형식이 잘못되었습니다.")
+
+    def save_to_json(self, content: str):
+        ''' json 파일 쓰기 '''
+        try:
+            self._text_in_shell = content # 사용자 입력 값을 모델에 저장
+            with open(self.json_path, 'w', encoding='utf-8') as f:
+                data_to_save = {'TextInTheShell': self._text_in_shell} # 모델 데이터를 json 형식으로 변환
+                json.dump(data_to_save, f, indent=4, ensure_ascii=False) # json에 데이터 저장
             
-        except FileNotFoundError:
-            return "오류: JSON 파일을 찾을 수 없음"
-        
-        except json.JSONDecodeError:
-            return "오류: JSON 파일 형식이 잘못됨"
+            self.jsonChanged.emit(self._text_in_shell) # json 데이터 쓰기가 발생했다는 시그널 방출
+            
+        except Exception as e:
+            print(f"Error saving to JSON: {e}")
 
-    def _set_label_text_to_json(self, content: str) -> None:
-        ''' QLabel에 표시될 내용을 지정하는 함수 '''
-
-        with open(self.json_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            data['TextInTheShell'] = content
-            json.dumps(data, indent=4, ensure_ascii=False)
-
-        self.userTextChanged.emit(data['TextInTheShell'])
-        
     '''
-    개발자 노트:
-        Qt 프로퍼티 선언부입니다.
+    ✅개발자 노트:
+        Qt 프로퍼티 선언부
         컨트롤러가 이 프로퍼티에 값을 할당하여 모델을 업데이트하거나,
-        이 함수에 담긴 값(모델에 저장된 데이터)을 꺼내어 이용할 수 있습니다.
+        이 함수에 담긴 값(모델에 저장된 데이터)을 꺼내어 이용할 수 있움
         
         컨트롤러가 이 프로퍼티에서 값을 꺼낼 경우 fget 인자로 들어온 함수가 실행되고,
-        컨트롤러가 이 프로퍼티에 값을 할당할 경우 fset 인자로 들어온 함수가 실행됩니다.
-    '''
-    text_json = pyqtProperty(
+        컨트롤러가 이 프로퍼티에 값을 할당할 경우 fset 인자로 들어온 함수가 실행
+        
+        현재 get_text_json()은 데코레이터를 통해 간소한 프로퍼티로 쓸 수 있는 상태
+        따라서 아래 프로퍼티는 필요 없으나 예제로 남김
+    ''' 
+    sample_property = pyqtProperty(
         str,
-        fget=_get_label_text_from_json,
-        fset=_set_label_text_to_json,
-        notify=userTextChanged
+        fget=get_text_json,
+        fset=None,
+        notify=jsonChanged
     )
-    
