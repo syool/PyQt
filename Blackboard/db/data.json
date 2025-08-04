@@ -1,13 +1,3 @@
 {
-    "title": "Z-01",
-    "text": "hello?",
-    "number": 1,
-    "list": [
-        {
-            "bool": true
-        },
-        {
-            "bool": false
-        }
-    ]
+    "TextInTheShell": "asefsge"
 }
