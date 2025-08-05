@@ -20,7 +20,7 @@ class Model(QObject):
         self._json_data: dict = self.load_from_json()
 
     @pyqtProperty(dict, notify=jsonChanged) # 데코레이터를 활용해 간소한 프로퍼티로 선언
-    def get_text_json(self) -> dict:
+    def get_json_data(self) -> dict:
         return self._json_data
 
     def load_from_json(self) -> dict:
@@ -53,12 +53,12 @@ class Model(QObject):
         컨트롤러가 이 프로퍼티에서 값을 꺼낼 경우 fget 인자로 들어온 함수가 실행되고,
         컨트롤러가 이 프로퍼티에 값을 할당할 경우 fset 인자로 들어온 함수가 실행
         
-        현재 get_text_json()은 데코레이터를 통해 간소한 프로퍼티로 쓸 수 있는 상태
+        현재 get_json_data()은 데코레이터를 통해 간소한 프로퍼티로 쓸 수 있는 상태
         따라서 아래 프로퍼티는 필요 없으나 예제로 남김
     ''' 
     sample_property = pyqtProperty(
         str,
-        fget=get_text_json,
+        fget=get_json_data,
         fset=None,
         notify=jsonChanged
     )
