@@ -29,7 +29,7 @@ class Launcher(QObject):
 
     def _do(self):
         ''' controller functions '''
-        LabelController._set_label(self, self.model.get_text_json) # 초기화: json 데이터를 QLabel에 반영
+        LabelController._set_label(self, self.model.get_json_data) # 초기화: json 데이터를 QLabel에 반영
                 
         self.view.show()
 
@@ -56,8 +56,8 @@ class LabelController(QObject):
         '''
         QLabel 글 설정
             ✅개발자 노트:
-                jsonChanged 시그널이 활성화되면 Model.get_text_json()의 리턴 값이 content 인자로 들어 옴\n
-                Model.get_text_json()는 @pyqtProperty 데코레이터에 의해 jsonChanged 시그널과 연동됨
+                jsonChanged 시그널이 활성화되면 Model.get_json_data()의 리턴 값이 content 인자로 들어 옴\n
+                Model.get_json_data()는 @pyqtProperty 데코레이터에 의해 jsonChanged 시그널과 연동됨
         '''
         self.view.label_output.setText(content['key1'])
 
