@@ -20,21 +20,19 @@ class Model(QObject):
         self._json_data: dict = self.load_from_json()
 
     @pyqtProperty(dict, notify=jsonChanged) # 데코레이터를 활용해 간소한 프로퍼티로 선언
-    def get_text_json(self):
+    def get_text_json(self) -> dict:
         return self._json_data
 
-    def load_from_json(self):
+    def load_from_json(self) -> dict:
         ''' json 파일 읽기 '''
         try:
             with open(self.json_path, 'r', encoding='utf-8') as f:
-                # self.jsonChanged.emit(self._json_data) # json 데이터 읽기가 발생했다는 시그널 방출
-                
                 return json.load(f) # json 데이터를 딕셔너리로 반환
                 
         except (FileNotFoundError, json.JSONDecodeError):
             print("Warning: JSON 파일을 찾을 수 없거나 형식이 잘못되었습니다.")
 
-    def save_to_json(self, key: str, val: str):
+    def save_to_json(self, key: str, val: str) -> None:
         ''' json 파일 쓰기 '''
         try:
             with open(self.json_path, 'w', encoding='utf-8') as f:
