@@ -51,15 +51,15 @@ class LabelController(QObject):
     def _do(self):
         self.model.jsonChanged.connect(self._set_label) # json 데이터 읽기 및 쓰기를 감지하여 슬롯 실행
         
-    @pyqtSlot(str)
-    def _set_label(self, content: str) -> None:
+    @pyqtSlot(dict)
+    def _set_label(self, content: dict) -> None:
         '''
         QLabel 글 설정
             ✅개발자 노트:
                 jsonChanged 시그널이 활성화되면 Model.get_text_json()의 리턴 값이 content 인자로 들어 옴\n
                 Model.get_text_json()는 @pyqtProperty 데코레이터에 의해 jsonChanged 시그널과 연동됨
         '''
-        self.view.label_output.setText(content)
+        self.view.label_output.setText(content['key1'])
 
 
 class ButtonController(QObject):
@@ -83,7 +83,7 @@ class ButtonController(QObject):
     @pyqtSlot()
     def _on_apply_clicked(self) -> None:
         ''' apply 버튼 클릭 이벤트 '''
-        self.model.save_to_json(self.view.line_input.text()) # QLineEdit 입력 값을 json에 저장
+        self.model.save_to_json('key1', self.view.line_input.text()) # QLineEdit 입력 값을 json에 저장
         
     @pyqtSlot()
     def _on_close_clicked(self) -> None:
