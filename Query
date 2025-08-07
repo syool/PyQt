@@ -1,37 +1,56 @@
-PyQt의 MVC 패턴에 대해 물어볼 게 있어.
+아래는 내가 짠 모델이야.
 
-지금 내가 만든 컨트롤러 모듈은 실행 컨트롤러 하나와 나머지 기능 컨트롤러 여러 개로 구성되어 있어. 예를 들어 MyCtrl.py 모듈의 내용은 다음과 같아.
+import json
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtProperty
 
-from PyQt5.QtCore import QObject
+class MissionMgrModel(QObject):
+    currentPageChanged = pyqtSignal(str)
+    missionItemSelected = pyqtSignal(dict)
 
-class Drive:
-    # 실행 컨트롤러
-    def __init__(self):
-        self.model = MyModel()
-        self.view = MyView()
-        self.controller = [
-            ButtonController(self.model, self.view),
-            LineEditController(self.model, self.view)
-        ]
-        self.view.show()
+    def __init__(self, *args: None, **kwargs: None) -> None:
+        super().__init__(*args, **kwargs)
+        self.path_json_missions: str = './JSON/missions_v2_sample.json'
+        self.page_init: str = 'page_init'
+        self._current_page = self.page_init
 
-class ButtonController(QObject):
-    # 기능 컨트롤러 1
-    def __init__(self, model, view):
-        self.model = model
-        self.view = view
-        # 이하 생략..
+        self.json_missions: dict = self._load_from_json()
+        self.mission_details: dict = {}
 
-class LineEditController(QObject):
-    # 기능 컨트롤러 2
-    def __init__(self, model, view):
-        self.model = model
-        self.view = view
-        # 이하 생략..
+        self.msn_categories: list = ['search', 'strike', 'patrol', 'surv']
+        self.tree_page_map: dict = {f'tree_{cat}': f'page_{cat}' for cat in self.msn_categories}
 
-다른 컨트롤러 모듈이나 main.py에서 MyView를 표시해야 한다면, MyCtrl.Drive()를 통해 객체를 생성하기만 하면 돼.
-여기서 문제가 있어. 실행 컨트롤러(Drive)가 QObject를 상속받지 않으니 코딩할 때 불편해. 그래서 실행 컨트롤러가 QObject를 상속받게 만들었더니 에러가 나. 내용은 아래와 같아.
+        for cat in self.msn_categories:
+            setattr(self, f'mission_items_{cat}', sorted(self._fetch_mission_content(cat).keys()))
 
-RecursionError: maximum recursion depth exceeded while calling a Python object
+    def _get_page(self) -> str:
+        return self._current_page
 
-실행 컨트롤러가 QObject를 상속받으면서도 이런 에러가 생기지 않게 만들 수 있어?
+    def _set_page(self, page_name: str) -> None:
+        if page_name != self._current_page:
+            self._current_page = page_name
+            self.currentPageChanged.emit(self._current_page)
+
+    def _load_from_json(self) -> dict:
+        try:
+            with open(self.path_json_missions, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            print("Warning: JSON not found.")
+
+    def _fetch_mission_content(self, msn_cat: str) -> list:
+        msn_names = {item['name']: item['details'] for item in self.json_missions[msn_cat]}
+        return msn_names
+
+    def set_mission_details(self, msn_cat: str, msn_name: str) -> None:
+        self.mission_details = self._fetch_mission_content(msn_cat).get(msn_name)
+        self.missionItemSelected.emit(self.mission_details)
+
+    @pyqtProperty(dict, notify=missionItemSelected)
+    def _get_mission_details(self) -> dict:
+        return self.mission_details
+
+    current_page = pyqtProperty( 
+        str, fget=_get_page, fset=_set_page, notify=currentPageChanged
+    )
+
+컨트롤러에서 missionItemSelected를 슬롯에 연결해서 이벤트를 구현하려는데, 슬롯에 _get_mission_details의 리턴 값이 안 들어와. 문제를 찾아줘.
