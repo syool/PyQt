@@ -1,7 +1,3 @@
-import json
-from PyQt5.QtCore import QObject, pyqtSignal, pyqtProperty
-
-
 class MissionMgrModel(QObject):
     currentPageChanged = pyqtSignal(str)
     missionItemSelected = pyqtSignal(str, str, dict)
