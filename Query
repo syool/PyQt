@@ -1,56 +1,84 @@
-아래는 내가 짠 모델이야.
-
-import json
-from PyQt5.QtCore import QObject, pyqtSignal, pyqtProperty
-
 class MissionMgrModel(QObject):
-    currentPageChanged = pyqtSignal(str)
-    missionItemSelected = pyqtSignal(dict)
+    currentPageChanged = pyqtSignal(str)
+    missionItemSelected = pyqtSignal(str, str, dict)
+    waypointItemSelected = pyqtSignal(int)
+    jsonEngaged = pyqtSignal()
 
-    def __init__(self, *args: None, **kwargs: None) -> None:
-        super().__init__(*args, **kwargs)
-        self.path_json_missions: str = './JSON/missions_v2_sample.json'
-        self.page_init: str = 'page_init'
-        self._current_page = self.page_init
+    def __init__(self, *args: None, **kwargs: None) -> None:
+        super().__init__(*args, **kwargs)
+        self.path_json_missions: str = './JSON/missions_v2_sample.json'
+        self.page_init: str = 'page_init'
+        self._current_page = self.page_init
 
-        self.json_missions: dict = self._load_from_json()
-        self.mission_details: dict = {}
+        self.json_missions: dict = {}
+        self._load_from_json()
 
-        self.msn_categories: list = ['search', 'strike', 'patrol', 'surv']
-        self.tree_page_map: dict = {f'tree_{cat}': f'page_{cat}' for cat in self.msn_categories}
+        self.current_msn_cat: str = ''
+        self.current_msn_name: str = ''
+        self.current_mission_details: dict = {}
 
-        for cat in self.msn_categories:
-            setattr(self, f'mission_items_{cat}', sorted(self._fetch_mission_content(cat).keys()))
+        self.msn_categories: list = ['search', 'strike', 'patrol', 'surv']
+        self.ap_types = ['수색지점(원형)', '수색지점(사각)', '타격지점', '정찰지점', '감시지점']
+        self.tree_page_map: dict = {f'tree_{cat}': f'page_{cat}' for cat in self.msn_categories}
+        for cat in self.msn_categories:
+            setattr(self, f'mission_items_{cat}', sorted(self._fetch_mission_content(cat).keys()))
 
-    def _get_page(self) -> str:
-        return self._current_page
+    @pyqtProperty(str, notify=currentPageChanged)
+    def current_page(self) -> str:
+        return self._current_page
 
-    def _set_page(self, page_name: str) -> None:
-        if page_name != self._current_page:
-            self._current_page = page_name
-            self.currentPageChanged.emit(self._current_page)
+    @current_page.setter
+    def current_page(self, page_name: str) -> None:
+        if page_name != self._current_page:
+            self._current_page = page_name
+            self.currentPageChanged.emit(self._current_page)
 
-    def _load_from_json(self) -> dict:
-        try:
-            with open(self.path_json_missions, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            print("Warning: JSON not found.")
+    @pyqtProperty(int, notify=waypointItemSelected)
+    def waypoint_selected(self) -> int:
+        return None  
 
-    def _fetch_mission_content(self, msn_cat: str) -> list:
-        msn_names = {item['name']: item['details'] for item in self.json_missions[msn_cat]}
-        return msn_names
+    @waypoint_selected.setter
+    def waypoint_selected(self, wp_idx: int) -> None:
+        self.waypointItemSelected.emit(wp_idx)
 
-    def set_mission_details(self, msn_cat: str, msn_name: str) -> None:
-        self.mission_details = self._fetch_mission_content(msn_cat).get(msn_name)
-        self.missionItemSelected.emit(self.mission_details)
 
-    @pyqtProperty(dict, notify=missionItemSelected)
-    def _get_mission_details(self) -> dict:
-        return self.mission_details
+    def _load_from_json(self) -> None:
+        try:
+            with open(self.path_json_missions, 'r', encoding='utf-8') as f:
+                self.json_missions = json.load(f)
+            self.jsonEngaged.emit()
 
-    current_page = pyqtProperty( 
-        str, fget=_get_page, fset=_set_page, notify=currentPageChanged
-    )
+        except (FileNotFoundError, json.JSONDecodeError):
+            print("Warning: JSON not found.")
 
-컨트롤러에서 missionItemSelected를 슬롯에 연결해서 이벤트를 구현하려는데, 슬롯에 _get_mission_details의 리턴 값이 안 들어와. 문제를 찾아줘.
+    def save_to_json(self) -> None:
+        try:
+            with open(self.path_json_missions, 'w', encoding='utf-8') as f:
+                json.dump(self.json_missions, f, indent=4, ensure_ascii=False)
+            self.jsonEngaged.emit()
+
+        except (FileNotFoundError, json.JSONDecodeError):
+            print("Warning: JSON not found.")
+
+    def _fetch_mission_content(self, msn_cat: str) -> dict:
+        msn_names = {item['name']: item['details'] for item in self.json_missions[msn_cat]}
+        return msn_names
+
+    def set_mission_details(self, msn_cat: str, msn_name: str) -> None:
+        self.current_msn_cat = msn_cat
+        self.current_msn_name = msn_name
+        self.current_mission_details = self._fetch_mission_content(msn_cat).get(msn_name)
+        self.missionItemSelected.emit(
+                self.current_msn_cat,
+                self.current_msn_name,
+                self.current_mission_details
+            )
+
+위 코드는 model.py야.
+
+for cat in self.model.msn_categories:
+    self.model.jsonEngaged.connect(lambda checked=False, c=cat: self._populate_trees(c))
+
+
+
+위처럼 controller.py에서 jsonEngaged 신호를 받도록 코딩했는데 실제로 시그널을 인식 못하는 것 같아. 이유가 뭐야?

@@ -1,0 +1,143 @@
+{
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.colorTheme": "Gruvbox Light Hard",
+    "editor.fontFamily": "'Fira Code iScript','나눔고딕'",
+    "editor.fontLigatures": true,
+    "editor.fontSize": 16,
+    "editor.cursorBlinking": "smooth",
+    "editor.bracketPairColorization.enabled": true,
+    "editor.suggestSelection": "first",
+    "editor.minimap.enabled": false,
+    "editor.stickyScroll.enabled": true,
+    "terminal.integrated.fontFamily": "'Fira Code iScript','나눔고딕'",
+    "terminal.integrated.inheritEnv": false,
+    "terminal.external.osxExec": "iTerm.app",
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    "terminal.integrated.defaultProfile.osx": "zsh",
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "debug.console.fontFamily": "'Fira Code iScript','나눔고딕'",
+    "python.languageServer": "Pylance",
+    "files.autoGuessEncoding": true,
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "left"
+    },
+    "launch": {
+        "configurations": [],
+        "compounds": []
+    },
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter-notebook"
+    },
+    "workbench.colorCustomizations": {
+        "editorBracketHighlight.foreground1": "#fcb228",
+        "editorBracketHighlight.foreground2": "#9acd32",
+        "editorBracketHighlight.foreground3": "#da70d6",
+        "editorBracketHighlight.foreground4": "#87cefa",
+        "editorBracketHighlight.foreground5": "#b44065",
+        "editorBracketHighlight.foreground6": "#b2beb5",
+        "editorBracketHighlight.unexpectedBracket.foreground": "#ff0000"
+    },
+    "window.restoreWindows": "none",
+    "window.titleBarStyle": "custom",
+    "window.commandCenter": true,
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    "[dart]": {
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "editor.rulers": [
+            80
+        ],
+        "editor.selectionHighlight": false,
+        "editor.suggest.snippetsPreventQuickSuggestions": false,
+        "editor.suggestSelection": "first",
+        "editor.tabCompletion": "onlySnippets",
+        "editor.wordBasedSuggestions": "off",
+    },
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": [
+                    "comment",
+                    "keyword", // 'import', 'for', 'while', 'return', 'if' ...
+                    "keyword.operator.logical", // 'is', 'not' ...
+                    "storage.type", // 'class', 'def' ...
+                    "storage.modifier", // 'final', 'const', 'required' ...
+                ],
+                "settings": {
+                    "fontStyle": "italic"
+                }
+            },
+            {
+                "scope": [
+                    "support.class", // Dart: all datatypes
+                ],
+                "settings": {
+                    "foreground": "#948f2ad6",
+                }
+            },
+            {
+                "scope": [
+                    "keyword.operator" // '< > + - ='
+                ],
+                "settings": {
+                    "fontStyle": ""
+                }
+            },
+        ]
+    },
+    "editor.accessibilitySupport": "off",
+    "terminal.integrated.enableMultiLinePasteWarning": "never",
+    "security.workspace.trust.untrustedFiles": "open",
+    "cmake.configureOnOpen": true,
+    "explorer.confirmDragAndDrop": false,
+    "better-comments.tags": [
+        {
+            "tag": "!",
+            "color": "#ff2d00",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "?",
+            "color": "#10e3d8",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "//",
+            "color": "#474747",
+            "strikethrough": true,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "todo",
+            "color": "#fce408",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "#000000",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "*",
+            "color": "#1cab0c",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        }
+    ]
+}
