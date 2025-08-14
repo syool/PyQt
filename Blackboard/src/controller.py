@@ -44,7 +44,7 @@ class LabelController(QObject):
         self.model = model
         self.view = view
 
-        self._set_label(self, self.model.get_json_data) # 초기화: json 데이터를 QLabel에 반영
+        self._set_label(self.model.get_json_data) # 초기화: json 데이터를 QLabel에 반영
         self._do()
         
     def _do(self):
