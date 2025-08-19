@@ -1,5 +1,5 @@
-prototype.json
-{
+raw_format.json
+search = {
     "name": "수색 001",
     "details": {
         "id": "MSN-SEARCH-001",
@@ -38,53 +38,40 @@ prototype.json
     }
 }
 
-real.json
+icd_format.json
 {
-    "MSN-SEARCH-001": [
+    "missionId": "MSN-SEARCH-001",
+    "missionName": "수색 001",
+    "missionType": "search",
+    "drivingMode": "원격",
+    "waypointCount": 2,
+    "waypoints": [
         {
-            "mission_name": "수색 001",
-            "mission_type": "search",
-            "driving_mode": "원격",
-            "num_of_waypoints": 2,
-            "waypoints": [
-                {
-                    "WP-001": [
-                        {
-                            "name": "경로 001",
-                            "type": "수색지점(원형)",
-                            "coord": "19T 121212 212121",
-                            "next_action": "원격",
-                            "fight": "교전"
-                        }
-                    ],
-                    "WP-002": [
-                        {
-                            "name": "경로 001",
-                            "type": "수색지점(사각)",
-                            "coord": "19T 313112 323112",
-                            "next_action": "원격",
-                            "fight": "미교전"
-                        }
-                    ],
-                    "WP-003": [
-                        {
-                            "name": "지점 003",
-                            "type": "단순경로",
-                            "coord": "19T 532223 688561",
-                            "next_action": "자율"
-                        }
-                    ],
-                    "WP-999": [
-                        {
-                            "name": "지점 999",
-                            "type": "목표지점",
-                            "coord": "19T 999999 999999"
-                        }
-                    ]
-                }
-            ]
+            "wpID": "WP-001",
+            "wpType": "수색지점(원형)",
+            "wpUTM": "19T 121212 212121",
+            "next_action": "원격",
+            "fight": "교전"
+        },
+        {
+            "wpID": "WP-002",
+            "wpType": "수색지점(사각)",
+            "wpUTM": "19T 313112 323112",
+            "next_action": "원격",
+            "fight": "미교전"
+        },
+        {
+            "wpID": "WP-003",
+            "wpType": "단순경로",
+            "wpUTM": "19T 532223 688561",
+            "next_action": "자율"
+        },
+        {
+            "wpID": "WP-999",
+            "wpType": "목표지점",
+            "wpUTM": "19T 999999 999999"
         }
     ]
 }
 
-prototype.json 내용을 real.json 형식에 맞게 변환하는 로직을 파이썬으로 구현해줘.
+raw_format.json 내용을 icd_format.json 형식에 맞게 변환하는 로직을 파이썬으로 구현해줘.
