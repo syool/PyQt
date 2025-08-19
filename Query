@@ -44,27 +44,39 @@ icd_format.json
     "missionName": "수색 001",
     "missionType": "search",
     "drivingMode": "원격",
-    "waypointCount": 2,
+    "waypointCount": 4,
     "waypoints": [
         {
             "wpID": "WP-001",
             "wpType": "수색지점(원형)",
             "wpUTM": "19T 121212 212121",
-            "next_action": "원격",
-            "fight": "교전"
+            "searchPoint": [
+                {
+                    "next_action": "원격",
+                    "fight": "교전"
+                }
+            ]
         },
         {
             "wpID": "WP-002",
             "wpType": "수색지점(사각)",
             "wpUTM": "19T 313112 323112",
-            "next_action": "원격",
-            "fight": "미교전"
+            "searchPoint": [
+                {
+                    "next_action": "원격",
+                    "fight": "미교전"
+                }
+            ]
         },
         {
             "wpID": "WP-003",
             "wpType": "단순경로",
             "wpUTM": "19T 532223 688561",
-            "next_action": "자율"
+            "simplePoint": [
+                {
+                    "next_action": "자율"
+                }
+            ] 
         },
         {
             "wpID": "WP-999",
