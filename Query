@@ -1,34 +1,90 @@
-class Messenger(object):
-    def __init__(
-            self,
-            model_sender: mission_create_n_modify_model.MsnCreateModifyModel,
-            model_receiver: mission_navigator_model.MissionMgrModel
-        ) -> None:
-        super().__init__()
+prototype.json
+{
+    "name": "수색 001",
+    "details": {
+        "id": "MSN-SEARCH-001",
+        "driving_mode": "",
+        "waypoints": [
+            {
+                "name": "지점 001",
+                "id": "WP-001",
+                "type": "수색지점(원형)",
+                "coord": "19T 121212 212121",
+                "next_action": "원격",
+                "fight": "교전"
+            },
+            {
+                "name": "지점 002",
+                "id": "WP-002",
+                "type": "수색지점(사각)",
+                "coord": "19T 313112 323112",
+                "next_action": "원격",
+                "fight": "미교전"
+            },
+            {
+                "name": "지점 003",
+                "id": "WP-003",
+                "type": "단순경로",
+                "coord": "19T 532223 688561",
+                "next_action": "자율"
+            },
+            {
+                "name": "지점 999",
+                "id": "WP-999",
+                "type": "목표지점",
+                "coord": "19T 999999 999999"
+            }
+        ]
+    }
+}
 
-        self.model_sender = model_sender # 임무 전송자 모델
-        self.model_receiver = model_receiver # 임무 수신자 모델
+real.json
+{
+    "MSN-SEARCH-001": [
+        {
+            "mission_name": "수색 001",
+            "mission_type": "search",
+            "driving_mode": "원격",
+            "num_of_waypoints": 2,
+            "waypoints": [
+                {
+                    "WP-001": [
+                        {
+                            "name": "경로 001",
+                            "type": "수색지점(원형)",
+                            "coord": "19T 121212 212121",
+                            "next_action": "원격",
+                            "fight": "교전"
+                        }
+                    ],
+                    "WP-002": [
+                        {
+                            "name": "경로 001",
+                            "type": "수색지점(사각)",
+                            "coord": "19T 313112 323112",
+                            "next_action": "원격",
+                            "fight": "미교전"
+                        }
+                    ],
+                    "WP-003": [
+                        {
+                            "name": "지점 003",
+                            "type": "단순경로",
+                            "coord": "19T 532223 688561",
+                            "next_action": "자율"
+                        }
+                    ],
+                    "WP-999": [
+                        {
+                            "name": "지점 999",
+                            "type": "목표지점",
+                            "coord": "19T 999999 999999"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
 
-        self.model_sender.missionPlanEngaged.connect(self._send_mission)
-
-    def _send_mission(self, msn: dict) -> None:
-        msn_cat = self.model_sender.current_page[12:]
-        msn_list = self.model_receiver.json_missions.get(msn_cat)
-
-        if msn.get('name') == '' or msn.get('driving_mode') == '':
-            print('기본 정보를 입력하세요')
-        else:
-            is_updated = False
-            for index, item in enumerate(msn_list):
-                if item.get('name') == msn.get('name'):
-                    msn_list[index]['details'] = msn['details']
-                    is_updated = True
-                    break
-
-            if not is_updated:
-                msn_list.append(msn)
-
-            self.model_receiver.json_missions.update({msn_cat: msn_list})
-            self.model_receiver.save_to_json()
-
-model_receiver.save_to_json()에 시그널을 방출하는 코드가 있어. 그런데 그 시그널이 동작을 안해. 이유가 뭘까? 참고로 save_to_json() 내 다른 코드는 잘 작동해.
+prototype.json 내용을 real.json 형식에 맞게 변환하는 로직을 파이썬으로 구현해줘.
