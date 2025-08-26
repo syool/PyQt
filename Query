@@ -1,23 +1,175 @@
-def _on_wp_modify_clicked(self, msn_cat: str) -> None:
-    wp_data: dict = {}
-    msn_item = getattr(self.view, f'{msn_cat}_tree_wps').currentItem().text(0)
-    if msn_item:
-        for wp in self.model.waypoint_data:
-            if wp.get('id') == msn_item:
-                wp_data = wp
-                break
+class MissionPageController(object):
+    def __init__(
+            self,
+            model: mission_create_n_modify_model.MsnCreateModifyModel,
+            view: mission_create_n_modify_view.MsnCreateModifyView,
+            *msn_content: None
+        ) -> None:
+        super().__init__()
 
-        # 첫 번째 루프
-        for prop, widget in  zip(getattr(self, f'PROP_{msn_cat}'), getattr(self, f'{msn_cat}_wp_prop')):
-            if 'switch' in widget:
-                getattr(self.view, widget).setCurrentText(wp_data.get(prop))
+        self.msn_content = msn_content
+        
+        self.model = model
+        self.view = view
+        
+        self.search_wp_prop = [
+            'search_lineEdit_wp_name',
+            'search_lineEdit_wp_coord',
+            'search_switch_wp_type',
+            'search_switch_fight_mode',
+            'search_switch_next_action'
+        ]
+        
+        self.strike_wp_prop = [
+            'strike_lineEdit_wp_name',
+            'strike_lineEdit_wp_coord',
+            'strike_switch_wp_type',
+            'strike_lineEdit_fight_range',
+            'strike_switch_fight_status',
+            'strike_switch_next_action'
+        ]
+        
+        self.patrol_wp_prop = [
+            'patrol_lineEdit_wp_name',
+            'patrol_lineEdit_wp_coord',
+            'patrol_switch_wp_type',
+            'patrol_switch_detect_obj',
+            'patrol_switch_repeat',
+            'patrol_switch_next_action'
+        ]
+        
+        self.surv_wp_prop = [
+            'surv_lineEdit_wp_name',
+            'surv_lineEdit_wp_coord',
+            'surv_switch_wp_type',
+            'surv_switch_detect_obj',
+            'surv_switch_rcws_status',
+            'surv_lineEdit_duration',
+            'surv_switch_next_action'
+        ]
+        
+        self.switch_wp = [
+            'search_switch_wp',
+            'strike_switch_wp',
+            'patrol_switch_wp',
+            'surv_switch_wp'
+        ]
+        
+        for x in self.switch_wp:
+            getattr(self.view, x).addItems(self.model.init_wp_IDs)
+            getattr(self.view, x).setCurrentIndex(-1)
+
+        self.btn_wp_apply = [
+            'search_btn_wp_apply',
+            'strike_btn_wp_apply',
+            'patrol_btn_wp_apply',
+            'surv_btn_wp_apply'
+        ]
+
+        self.btn_wp_modify = [
+            'search_btn_wp_modify',
+            'strike_btn_wp_modify',
+            'patrol_btn_wp_modify',
+            'surv_btn_wp_modify',
+        ]
+        
+        self.btn_wp_del = [
+            'search_btn_wp_del',
+            'strike_btn_wp_del',
+            'patrol_btn_wp_del',
+            'surv_btn_wp_del',
+        ]
+        
+        self.PROP_search = ['name', 'coord', 'type', 'fight', 'next_action']
+        self.PROP_strike = ['name', 'coord', 'type', 'fight_range', 'fight_status', 'next_action']
+        self.PROP_patrol = ['name', 'coord', 'type', 'detect_obj', 'repeat', 'next_action']
+        self.PROP_surv = ['name', 'coord', 'type', 'detect_obj', 'rcws_status', 'duration', 'next_action']
+        
+        for cat in self.model.btn_combo_map:
+            self._on_wp_switched(cat)
+            
+        self._do()
+        
+    def _do(self) -> None:
+        for wp in self.switch_wp:
+            getattr(self.view, wp).currentTextChanged.connect(lambda checked=False, c=(wp[:-10]): self._on_wp_switched(c))
+        
+        for btn in self.btn_wp_apply:
+            getattr(self.view, btn).clicked.connect(lambda checked=False, c=(btn[:-13]): self._on_wp_apply_clicked(c))
+        
+        for btn in self.btn_wp_modify:
+            getattr(self.view, btn).clicked.connect(lambda checked=False, c=(btn[:-14]): self._on_wp_modify_clicked(c))
+        
+        for btn in self.btn_wp_del:
+            getattr(self.view, btn).clicked.connect(lambda checked=False, c=(btn[:-11]): self._on_wp_del_clicked(c))
+        
+        self.model.newWaypointAdded.connect(self._populate_tree)
+
+    def _on_wp_switched(self, msn_cat: str) -> None:
+        for wg in getattr(self, f'{msn_cat}_wp_prop'):
+            if 'switch' in wg:
+                getattr(self.view, wg).setCurrentIndex(-1)
             else:
-                getattr(self.view, widget).setText(wp_data.get(prop))
-
-        # 두 번째 루프
+                getattr(self.view, wg).clear()
+        
+    def _on_wp_apply_clicked(self, msn_cat: str) -> None:
+        wp_data: dict = {}
+        for prop, widget in zip(getattr(self, f'PROP_{msn_cat}'), getattr(self, f'{msn_cat}_wp_prop')):
+            if 'switch' in widget:
+                wp_data[prop] = getattr(self.view, widget).currentText()
+            else:
+                wp_data[prop] = getattr(self.view, widget).text()
+                
         for wp in self.switch_wp:
             if msn_cat in wp:
-                getattr(self.view, wp).setCurrentText(wp_data.get('id'))
+                wp_data['id'] = getattr(self.view, wp).currentText()
                 break
+                
+        self.model.waypoint_data = ['apply', wp_data]
+        
+    def _populate_tree(self, msn_cat: str, wp_list: list) -> None:
+        getattr(self.view, f'{msn_cat}_tree_wps').clear()
 
-버튼 클릭 시 실행되는 함수야. 두 번째 루프는 첫 클릭에 잘 실행되는데, 첫 번째 루프가 버튼을 두 번 눌러야 실행이 돼. 뭐가 문제야?
+        for wp in wp_list:
+            wp_on_tree = [wp['id'], wp['name'], wp['type'], wp['coord']]
+            QTreeWidgetItem(getattr(self.view, f'{msn_cat}_tree_wps'), wp_on_tree)
+            
+    def _on_wp_modify_clicked(self, msn_cat: str) -> None:
+        print(self.model.waypoint_data)
+        
+        wp_data: dict = {}
+        msn_item = getattr(self.view, f'{msn_cat}_tree_wps').currentItem().text(0)
+        if msn_item:
+            for wp in self.model.waypoint_data:
+                if wp.get('id') == msn_item:
+                    wp_data = wp
+                    break
+
+            # 문제가 있는 루프
+            for prop, widget in  zip(getattr(self, f'PROP_{msn_cat}'), getattr(self, f'{msn_cat}_wp_prop')):
+                if 'switch' in widget:
+                    getattr(self.view, widget).setCurrentText(wp_data.get(prop))
+                else:
+                    getattr(self.view, widget).setText(wp_data.get(prop))
+
+            # 정상 루프
+            for wp in self.switch_wp:
+                if msn_cat in wp:
+                    getattr(self.view, wp).setCurrentText(wp_data.get('id'))
+                    break
+        else:
+            print('you chose nothing')
+            
+    def _on_wp_del_clicked(self, msn_cat: str) -> None:
+        msn_item = getattr(self.view, f'{msn_cat}_tree_wps').currentItem().text(0)
+        if msn_item:
+            for wp in self.model.waypoint_data:
+                if wp.get('id') == msn_item:
+                    wp_data = wp
+                    break
+        else:
+            print('you chose nothing')
+        
+        self.model.waypoint_data = ['del', wp_data]
+
+컨트롤러 클래스야. 문제가 있는 루프는 버튼을 두 번 눌러야 작동하고, 정상 루프는 첫 클릭에 바로 작동해. 이유가 뭐야?
